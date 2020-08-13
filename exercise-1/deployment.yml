@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: awesome-app
+  namespace: exercice-1
+  labels:
+    app: awesome-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: awesome-app
+  template:
+    metadata:
+      labels:
+        app: awesome-app
+    spec:
+      containers:
+        - name: web-app
+          image: gcr.io/google_containers/liveness
+          args:
+            - /server
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              httpHeaders:
+                - name: X-Custom-Header
+                  value: Awesome
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100
+      serviceAccountName: awesone-app
